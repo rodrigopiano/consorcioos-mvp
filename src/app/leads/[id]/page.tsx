@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, Check, Loader2, UserPen, ChevronDown, Save,
@@ -35,13 +35,16 @@ const stageColor: Record<FunnelStage, string> = {
 export default function EditLeadPage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const id = params.id as string;
 
   const [lead, setLead] = useState<Lead | null>(null);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  const [tab, setTab] = useState<"dados" | "acao">("dados");
+  const [tab, setTab] = useState<"dados" | "acao">(
+    searchParams.get("tab") === "acao" ? "acao" : "dados"
+  );
 
   const [form, setForm] = useState({
     name: "",

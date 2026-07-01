@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Bell, Phone, MessageCircle, CheckCircle2, AlertTriangle, Hourglass, ChevronRight, Loader2 } from "lucide-react";
 import { getLeads, completeNextAction, setNextAction } from "@/lib/db";
 import { Lead, STAGE_LABELS, CHANNEL_LABELS, INTEREST_LABELS } from "@/lib/types";
@@ -144,9 +145,9 @@ function FollowUpCard({ lead, urgency, isDone, isPostponed, onComplete, onPostpo
           <button onClick={onPostpone} className="flex-1 flex items-center justify-center gap-1.5 bg-[#334155] hover:bg-slate-600 text-slate-300 px-3 py-2 rounded-lg text-xs font-medium transition-colors">
             <Hourglass className="w-3.5 h-3.5" />Adiar 1 dia
           </button>
-          <button className="flex items-center justify-center gap-1.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 px-3 py-2 rounded-lg text-xs font-medium transition-colors">
+          <Link href={`/leads/${lead.id}?tab=acao`} className="flex items-center justify-center gap-1.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 px-3 py-2 rounded-lg text-xs font-medium transition-colors">
             <ChevronRight className="w-3.5 h-3.5" />Próxima ação
-          </button>
+          </Link>
         </div>
       )}
       {isDone && <div className="mt-3 pt-3 border-t border-[#334155] flex items-center gap-2 text-xs text-green-400"><CheckCircle2 className="w-3.5 h-3.5" />Concluído hoje</div>}

@@ -9,6 +9,7 @@ import { createLead } from "@/lib/db";
 export default function NovoLeadPage() {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -48,8 +49,10 @@ export default function NovoLeadPage() {
       );
       setStatus("done");
       setTimeout(() => router.push("/leads"), 1500);
-    } catch {
+    } catch (err) {
+      console.error("Erro ao criar lead:", err);
       setStatus("error");
+      setErrorMsg(err instanceof Error ? err.message : String(err));
     }
   }
 
@@ -84,7 +87,7 @@ export default function NovoLeadPage() {
 
       {status === "error" && (
         <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-400 text-sm">
-          Erro ao salvar. Verifique a conexão com o Supabase no arquivo <code>.env.local</code>.
+          Erro ao salvar: {errorMsg || "Verifique a conexão com o Supabase."}
         </div>
       )}
 

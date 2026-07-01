@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft, Check, Loader2, UserPen, Save,
+  ArrowLeft, Check, Loader2, Pencil, Save,
   MessageCircle, Phone, AlertTriangle
 } from "lucide-react";
 import {
@@ -153,7 +153,7 @@ export default function EditLeadPage() {
         </Link>
         <div className="flex-1 min-w-0">
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <UserPen className="w-6 h-6 text-sky-400" />
+            <Pencil className="w-6 h-6 text-sky-400" />
             {lead.name}
           </h1>
           <p className="text-slate-400 text-sm mt-0.5">Cadastrado em {formatDate(lead.createdAt)}</p>

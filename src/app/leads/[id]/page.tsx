@@ -1,16 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft, Check, Loader2, UserPen, ChevronDown, Save,
-  MessageCircle, Phone, Trash2, AlertTriangle
+  ArrowLeft, Check, Loader2, UserPen, Save,
+  MessageCircle, Phone, AlertTriangle
 } from "lucide-react";
 import {
   LeadOrigin, LeadInterest, ActionChannel, FunnelStage,
   ORIGIN_LABELS, INTEREST_LABELS, CHANNEL_LABELS, STAGE_LABELS,
 } from "@/lib/types";
-import { getLeadById, updateLead, updateLeadStage, setNextAction } from "@/lib/db";
+import { getLeadById, updateLead, setNextAction } from "@/lib/db";
 import { Lead } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -35,16 +35,19 @@ const stageColor: Record<FunnelStage, string> = {
 export default function EditLeadPage() {
   const router = useRouter();
   const params = useParams();
-  const searchParams = useSearchParams();
   const id = params.id as string;
 
   const [lead, setLead] = useState<Lead | null>(null);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  const [tab, setTab] = useState<"dados" | "acao">(
-    searchParams.get("tab") === "acao" ? "acao" : "dados"
-  );
+  const [tab, setTab] = useState<"dados" | "acao">("dados");
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.search.includes("tab=acao")) {
+      setTab("acao");
+    }
+  }, []);
 
   const [form, setForm] = useState({
     name: "",

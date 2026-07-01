@@ -129,7 +129,7 @@ export default function LeadsPage() {
                         ) : (
                           <a href={`tel:${lead.phone.replace(/\D/g, "")}`} className="p-1.5 text-sky-400 hover:bg-sky-500/10 rounded transition-colors"><Phone className="w-4 h-4" /></a>
                         )}
-                        <button className="p-1.5 text-slate-400 hover:text-white hover:bg-[#334155] rounded transition-colors"><ChevronRight className="w-4 h-4" /></button>
+                        <Link href={`/leads/${lead.id}`} className="p-1.5 text-slate-400 hover:text-white hover:bg-[#334155] rounded transition-colors"><ChevronRight className="w-4 h-4" /></Link>
                       </div>
                     </td>
                   </tr>

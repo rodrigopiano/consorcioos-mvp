@@ -56,6 +56,36 @@ export async function updateLeadStage(leadId: string, stage: Lead["stage"]) {
   if (error) throw error;
 }
 
+export async function updateLead(
+  leadId: string,
+  data: Partial<Omit<Lead, "id" | "createdAt" | "nextAction">>
+) {
+  const { error } = await supabase
+    .from("leads")
+    .update({
+      ...(data.name !== undefined && { name: data.name }),
+      ...(data.phone !== undefined && { phone: data.phone }),
+      ...(data.origin !== undefined && { origin: data.origin }),
+      ...(data.interest !== undefined && { interest: data.interest }),
+      ...(data.stage !== undefined && { stage: data.stage }),
+      ...(data.notes !== undefined && { notes: data.notes }),
+      ...(data.value !== undefined && { value: data.value }),
+      last_interaction: new Date().toISOString().split("T")[0],
+    })
+    .eq("id", leadId);
+  if (error) throw error;
+}
+
+export async function getLeadById(leadId: string): Promise<Lead | null> {
+  const { data, error } = await supabase
+    .from("leads")
+    .select("*, next_actions(*)")
+    .eq("id", leadId)
+    .single();
+  if (error) return null;
+  return mapLead(data);
+}
+
 export async function completeNextAction(actionId: string) {
   const { error } = await supabase
     .from("next_actions")

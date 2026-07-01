@@ -52,7 +52,8 @@ export default function NovoLeadPage() {
     } catch (err) {
       console.error("Erro ao criar lead:", err);
       setStatus("error");
-      setErrorMsg(err instanceof Error ? err.message : String(err));
+      const msg = err instanceof Error ? err.message : (err as {message?: string})?.message || JSON.stringify(err);
+      setErrorMsg(msg);
     }
   }
 

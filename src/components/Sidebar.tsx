@@ -1,20 +1,13 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Users,
-  Kanban,
-  Bell,
-  CheckSquare,
-  BarChart2,
-  Zap,
-} from "lucide-react";
+import { LayoutDashboard, Users, Kanban, Bell, CheckSquare, BarChart2, Zap, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const nav = [
   { href: "/", icon: LayoutDashboard, label: "Dashboard", badge: null },
-  { href: "/followup", icon: Bell, label: "Follow-up", badge: "8" },
+  { href: "/execucao", icon: Play, label: "Modo Execução", badge: null, highlight: true },
+  { href: "/followup", icon: Bell, label: "Follow-up", badge: null },
   { href: "/tarefas", icon: CheckSquare, label: "Tarefas do Dia", badge: null },
   { href: "/funil", icon: Kanban, label: "Funil", badge: null },
   { href: "/leads", icon: Users, label: "Leads", badge: null },
@@ -39,7 +32,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 p-3 space-y-1">
-        {nav.map(({ href, icon: Icon, label, badge }) => {
+        {nav.map(({ href, icon: Icon, label, badge, highlight }) => {
           const active = pathname === href;
           return (
             <Link
@@ -49,16 +42,16 @@ export default function Sidebar() {
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                 active
                   ? "bg-sky-500 text-white"
+                  : highlight
+                  ? "text-sky-400 hover:text-white hover:bg-sky-500/10 border border-sky-500/20"
                   : "text-slate-400 hover:text-white hover:bg-[#273549]"
               )}
             >
               <Icon className="w-4 h-4 flex-shrink-0" />
               <span className="flex-1">{label}</span>
               {badge && (
-                <span className={cn(
-                  "text-xs px-1.5 py-0.5 rounded-full font-bold",
-                  active ? "bg-white/20 text-white" : "bg-orange-500 text-white"
-                )}>
+                <span className={cn("text-xs px-1.5 py-0.5 rounded-full font-bold",
+                  active ? "bg-white/20 text-white" : "bg-orange-500 text-white")}>
                   {badge}
                 </span>
               )}
@@ -67,11 +60,16 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="p-3 border-t border-[#334155]">
-        <div className="flex items-center gap-2 px-3 py-2">
-          <div className="w-7 h-7 bg-slate-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
-            C
-          </div>
+      {/* Botão fixo "O que faço agora?" */}
+      <div className="p-3 border-t border-[#334155] space-y-3">
+        <Link href="/execucao"
+          className="flex items-center justify-center gap-2 w-full bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-400 hover:text-sky-300 px-3 py-2.5 rounded-lg text-xs font-semibold transition-colors">
+          <Zap className="w-3.5 h-3.5" />
+          O que faço agora?
+        </Link>
+
+        <div className="flex items-center gap-2 px-2 py-1.5">
+          <div className="w-7 h-7 bg-slate-600 rounded-full flex items-center justify-center text-xs font-bold text-white">C</div>
           <div className="flex-1 min-w-0">
             <div className="text-xs font-medium text-white truncate">Consultor</div>
             <div className="text-xs text-slate-400">Ativo</div>

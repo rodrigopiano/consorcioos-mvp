@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Phone, Users, Bell, Calendar, TrendingUp,
-  ChevronRight, AlertTriangle, Zap, Clock, CheckCircle2
+  ChevronRight, AlertTriangle, Zap, Clock, CheckCircle2, Play
 } from "lucide-react";
 import { getLeads } from "@/lib/db";
 import { Lead } from "@/lib/types";
@@ -51,10 +51,16 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold text-white">Bom dia, Consultor 👋</h1>
           <p className="text-slate-400 text-sm capitalize">{today}</p>
         </div>
-        <Link href="/leads/novo" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-          <Users className="w-4 h-4" />
-          Novo Lead
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/execucao" className="flex items-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-md shadow-sky-500/20">
+            <Play className="w-4 h-4 fill-white" />
+            Iniciar Execução
+          </Link>
+          <Link href="/leads/novo" className="flex items-center gap-2 bg-[#1e293b] hover:bg-[#273549] border border-[#334155] text-slate-300 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+            <Users className="w-4 h-4" />
+            Novo Lead
+          </Link>
+        </div>
       </div>
 
       {leads.length === 0 ? (

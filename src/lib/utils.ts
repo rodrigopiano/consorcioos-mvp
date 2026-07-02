@@ -5,15 +5,20 @@ export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);
 }
 
+function localToday(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 export function isOverdue(dateStr: string): boolean {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return new Date(dateStr) < today;
+  return dateStr < localToday();
 }
 
 export function isDueToday(dateStr: string): boolean {
-  const today = new Date().toISOString().split("T")[0];
-  return dateStr === today;
+  return dateStr === localToday();
 }
 
 export function formatDate(dateStr: string): string {

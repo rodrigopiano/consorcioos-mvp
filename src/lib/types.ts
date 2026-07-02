@@ -14,7 +14,8 @@ export type LeadOrigin =
   | "tiktok"
   | "evento"
   | "networking"
-  | "indicacao";
+  | "indicacao"
+  | "lead_ava";
 
 export type LeadInterest = "imovel" | "carro" | "investimento";
 
@@ -70,6 +71,7 @@ export const ORIGIN_LABELS: Record<LeadOrigin, string> = {
   evento: "Evento",
   networking: "Networking",
   indicacao: "Indicação",
+  lead_ava: "Lead Ava",
 };
 
 export const INTEREST_LABELS: Record<LeadInterest, string> = {

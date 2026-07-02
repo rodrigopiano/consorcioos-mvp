@@ -10,6 +10,7 @@ import {
 import { getLeads, completeNextAction, setNextAction } from "@/lib/db";
 import { Lead, ORIGIN_LABELS, INTEREST_LABELS, CHANNEL_LABELS, STAGE_LABELS } from "@/lib/types";
 import { buildExecutionQueue, buildDaySummary, getLeadsWithoutAction, ExecutionTask, DaySummary } from "@/lib/priority";
+import { buildDailyReport, saveReport } from "@/lib/resumo";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -92,8 +93,10 @@ export default function ExecucaoPage() {
 
     const remaining = queue.filter(t => !newCompleted.includes(t.lead.id) && !skipped.includes(t.lead.id));
     if (remaining.length === 0) {
-      const s = buildDaySummary(leads, newCompleted, contactsDone + 1, CONTACTS_GOAL);
+      const newContacts = contactsDone + 1;
+      const s = buildDaySummary(leads, newCompleted, newContacts, CONTACTS_GOAL);
       setSummary(s);
+      saveReport(buildDailyReport(leads, { contactsDone: newContacts, contactsGoal: CONTACTS_GOAL, tasksCompleted: newCompleted.length, tasksTotal: queue.length }));
       setMode("finished");
     }
   }
@@ -116,6 +119,7 @@ export default function ExecucaoPage() {
     if (remaining.length === 0) {
       const s = buildDaySummary(leads, completed, contactsDone, CONTACTS_GOAL);
       setSummary(s);
+      saveReport(buildDailyReport(leads, { contactsDone, contactsGoal: CONTACTS_GOAL, tasksCompleted: completed.length, tasksTotal: queue.length }));
       setMode("finished");
     }
   }
@@ -124,6 +128,7 @@ export default function ExecucaoPage() {
     if (completed.length > 0 || skipped.length > 0) {
       const s = buildDaySummary(leads, completed, contactsDone, CONTACTS_GOAL);
       setSummary(s);
+      saveReport(buildDailyReport(leads, { contactsDone, contactsGoal: CONTACTS_GOAL, tasksCompleted: completed.length, tasksTotal: queue.length }));
       setMode("finished");
     } else {
       setMode("idle");
@@ -598,11 +603,14 @@ function DaySummaryScreen({ summary, completed, skipped, queue, onRestart }: {
       {/* Botões */}
       <div className="flex gap-3 pt-2">
         <button onClick={onRestart}
-          className="flex-1 flex items-center justify-center gap-2 bg-[#1e293b] hover:bg-[#273549] border border-[#334155] text-slate-300 py-3 rounded-xl font-medium transition-colors">
+          className="flex items-center justify-center gap-2 bg-[#1e293b] hover:bg-[#273549] border border-[#334155] text-slate-300 px-5 py-3 rounded-xl font-medium transition-colors">
           <RefreshCw className="w-4 h-4" />Nova sessão
         </button>
-        <Link href="/" className="flex-1 flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-600 text-white py-3 rounded-xl font-semibold transition-colors">
-          <ArrowRight className="w-4 h-4" />Voltar ao início
+        <Link href="/resumo" className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white py-3 rounded-xl font-semibold transition-colors">
+          <ArrowRight className="w-4 h-4" />Ver Resumo Completo
+        </Link>
+        <Link href="/" className="flex items-center justify-center gap-2 bg-[#1e293b] hover:bg-[#273549] border border-[#334155] text-slate-300 px-5 py-3 rounded-xl font-medium transition-colors">
+          Home
         </Link>
       </div>
     </div>

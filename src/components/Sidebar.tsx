@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Kanban, Bell, CheckSquare, BarChart2, Zap, Play } from "lucide-react";
+import { LayoutDashboard, Users, Kanban, Bell, CheckSquare, BarChart2, Zap, Play, ClipboardList } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getLeads } from "@/lib/db";
 import { buildExecutionQueue } from "@/lib/priority";
@@ -15,6 +15,7 @@ const nav = [
   { href: "/funil", icon: Kanban, label: "Funil", highlight: false },
   { href: "/leads", icon: Users, label: "Leads", highlight: false },
   { href: "/metricas", icon: BarChart2, label: "Métricas", highlight: false },
+  { href: "/resumo", icon: ClipboardList, label: "Resumo Diário", highlight: false },
 ];
 
 export default function Sidebar() {

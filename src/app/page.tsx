@@ -13,6 +13,7 @@ import {
   buildExecutionQueue, buildClosingRadar, calcRiskRevenue,
   buildPipeline, ExecutionTask
 } from "@/lib/priority";
+import { getYesterdayReport, RATING_CONFIG } from "@/lib/resumo";
 import { cn } from "@/lib/utils";
 
 export default function Dashboard() {
@@ -62,6 +63,7 @@ export default function Dashboard() {
 
   const queue = buildExecutionQueue(leads);
   const radar = buildClosingRadar(leads);
+  const yesterdayReport = typeof window !== "undefined" ? getYesterdayReport() : null;
   const risk = calcRiskRevenue(leads);
   const pipeline = buildPipeline(leads);
   const missaoTop3 = queue.slice(0, 3);
@@ -94,6 +96,24 @@ export default function Dashboard() {
           </Link>
         </div>
       </div>
+
+      {/* Card resumo de ontem */}
+      {yesterdayReport && (() => {
+        const rc = RATING_CONFIG[yesterdayReport.rating];
+        return (
+          <Link href="/resumo" className="flex items-center gap-4 bg-[#1e293b] border border-[#334155] hover:border-sky-500/40 rounded-xl p-4 transition-colors group">
+            <div className="text-3xl">{rc.emoji}</div>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs text-slate-400 mb-0.5">Resumo de ontem</div>
+              <div className={cn("text-sm font-semibold", rc.color)}>{rc.label} — {yesterdayReport.goalPercent}% da meta</div>
+              <div className="text-xs text-slate-500 mt-0.5">
+                {yesterdayReport.contacts.done} contatos · {yesterdayReport.tasksCompleted} tarefas · {yesterdayReport.salesClosed} vendas
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 flex-shrink-0" />
+          </Link>
+        );
+      })()}
 
       {/* Alerta de atrasados */}
       {overdueLeads.length > 0 && (

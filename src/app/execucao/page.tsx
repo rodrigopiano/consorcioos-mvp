@@ -147,14 +147,30 @@ export default function ExecucaoPage() {
       <div className="min-h-full bg-[#0f172a] flex flex-col">
         {/* Header minimalista */}
         <div className="border-b border-[#1e293b] px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-white">Modo Execução</span>
-            <span className="text-xs text-slate-500">{completed.length + skipped.length}/{queue.length} tarefas</span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              <span className="text-sm font-semibold text-white">Modo Execução</span>
+            </div>
+            {currentTask && (
+              <div className="flex items-center gap-2 bg-sky-500/10 border border-sky-500/20 rounded-full px-3 py-1">
+                <Zap className="w-3 h-3 text-sky-400" />
+                <span className="text-xs font-bold text-sky-300">
+                  Missão {completed.length + skipped.length + 1} de {queue.length}
+                </span>
+              </div>
+            )}
           </div>
-          <button onClick={handleExit} className="flex items-center gap-1.5 text-slate-500 hover:text-white text-xs transition-colors px-3 py-1.5 rounded-lg hover:bg-[#1e293b]">
-            <X className="w-3.5 h-3.5" />Encerrar
-          </button>
+          <div className="flex items-center gap-3">
+            <div className="h-1.5 w-32 bg-[#334155] rounded-full overflow-hidden">
+              <div className="h-full bg-sky-500 rounded-full transition-all"
+                style={{ width: `${queue.length > 0 ? Math.round(((completed.length + skipped.length) / queue.length) * 100) : 0}%` }} />
+            </div>
+            <span className="text-xs text-slate-500">{completed.length + skipped.length}/{queue.length}</span>
+            <button onClick={handleExit} className="flex items-center gap-1.5 text-slate-500 hover:text-white text-xs transition-colors px-3 py-1.5 rounded-lg hover:bg-[#1e293b]">
+              <X className="w-3.5 h-3.5" />Encerrar
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-1 max-w-5xl mx-auto w-full px-6 py-6 gap-6">

@@ -1,21 +1,34 @@
 "use client";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, Kanban, Bell, CheckSquare, BarChart2, Zap, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getLeads } from "@/lib/db";
+import { buildExecutionQueue } from "@/lib/priority";
 
 const nav = [
-  { href: "/", icon: LayoutDashboard, label: "Dashboard", badge: null },
-  { href: "/execucao", icon: Play, label: "Modo Execução", badge: null, highlight: true },
-  { href: "/followup", icon: Bell, label: "Follow-up", badge: null },
-  { href: "/tarefas", icon: CheckSquare, label: "Tarefas do Dia", badge: null },
-  { href: "/funil", icon: Kanban, label: "Funil", badge: null },
-  { href: "/leads", icon: Users, label: "Leads", badge: null },
-  { href: "/metricas", icon: BarChart2, label: "Métricas", badge: null },
+  { href: "/", icon: LayoutDashboard, label: "Dashboard", highlight: false },
+  { href: "/execucao", icon: Play, label: "Modo Execução", highlight: true },
+  { href: "/followup", icon: Bell, label: "Follow-up", highlight: false },
+  { href: "/tarefas", icon: CheckSquare, label: "Tarefas do Dia", highlight: false },
+  { href: "/funil", icon: Kanban, label: "Funil", highlight: false },
+  { href: "/leads", icon: Users, label: "Leads", highlight: false },
+  { href: "/metricas", icon: BarChart2, label: "Métricas", highlight: false },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [topLeadId, setTopLeadId] = useState<string | null>(null);
+
+  useEffect(() => {
+    getLeads().then(leads => {
+      const queue = buildExecutionQueue(leads);
+      setTopLeadId(queue[0]?.lead.id ?? null);
+    });
+  }, []);
+
+  const agirHref = topLeadId ? `/leads/${topLeadId}?tab=acao` : "/execucao";
 
   return (
     <aside className="w-56 flex-shrink-0 bg-[#1e293b] border-r border-[#334155] flex flex-col">
@@ -32,12 +45,10 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 p-3 space-y-1">
-        {nav.map(({ href, icon: Icon, label, badge, highlight }) => {
+        {nav.map(({ href, icon: Icon, label, highlight }) => {
           const active = pathname === href;
           return (
-            <Link
-              key={href}
-              href={href}
+            <Link key={href} href={href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                 active
@@ -45,24 +56,17 @@ export default function Sidebar() {
                   : highlight
                   ? "text-sky-400 hover:text-white hover:bg-sky-500/10 border border-sky-500/20"
                   : "text-slate-400 hover:text-white hover:bg-[#273549]"
-              )}
-            >
+              )}>
               <Icon className="w-4 h-4 flex-shrink-0" />
               <span className="flex-1">{label}</span>
-              {badge && (
-                <span className={cn("text-xs px-1.5 py-0.5 rounded-full font-bold",
-                  active ? "bg-white/20 text-white" : "bg-orange-500 text-white")}>
-                  {badge}
-                </span>
-              )}
             </Link>
           );
         })}
       </nav>
 
-      {/* Botão fixo "O que faço agora?" */}
+      {/* Botão "O que faço agora?" — aponta para o lead mais urgente */}
       <div className="p-3 border-t border-[#334155] space-y-3">
-        <Link href="/execucao"
+        <Link href={agirHref}
           className="flex items-center justify-center gap-2 w-full bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-400 hover:text-sky-300 px-3 py-2.5 rounded-lg text-xs font-semibold transition-colors">
           <Zap className="w-3.5 h-3.5" />
           O que faço agora?

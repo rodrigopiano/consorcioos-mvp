@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Bell, Phone, MessageCircle, CheckCircle2, AlertTriangle, Hourglass, ChevronRight, Loader2 } from "lucide-react";
-import { getLeads, completeNextAction, setNextAction } from "@/lib/db";
+import { getLeads, completeNextActionByLead, setNextAction } from "@/lib/db";
 import { Lead, STAGE_LABELS, CHANNEL_LABELS, INTEREST_LABELS } from "@/lib/types";
 import { getLeadUrgency, formatDate, formatCurrency, isDueToday, isOverdue } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -39,6 +39,7 @@ export default function FollowUpPage() {
 
   async function handleComplete(lead: Lead) {
     if (!lead.nextAction) return;
+    await completeNextActionByLead(lead.id);
     setCompleted(prev => new Set(prev).add(lead.id));
   }
 

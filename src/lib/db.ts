@@ -94,6 +94,15 @@ export async function completeNextAction(actionId: string) {
   if (error) throw error;
 }
 
+export async function completeNextActionByLead(leadId: string) {
+  const { error } = await supabase
+    .from("next_actions")
+    .update({ completed: true })
+    .eq("lead_id", leadId)
+    .eq("completed", false);
+  if (error) throw error;
+}
+
 export async function setNextAction(
   leadId: string,
   action: Omit<NextAction, "completed">

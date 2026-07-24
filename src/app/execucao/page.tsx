@@ -7,7 +7,7 @@ import {
   ArrowRight, Loader2, Trophy, TrendingUp, Users,
   Calendar, FileText, RefreshCw, Star
 } from "lucide-react";
-import { getLeads, completeNextAction, setNextAction } from "@/lib/db";
+import { getLeads, completeNextActionByLead, setNextAction } from "@/lib/db";
 import { Lead, ORIGIN_LABELS, INTEREST_LABELS, CHANNEL_LABELS, STAGE_LABELS } from "@/lib/types";
 import { buildExecutionQueue, buildDaySummary, getLeadsWithoutAction, ExecutionTask, DaySummary } from "@/lib/priority";
 import { buildDailyReport, saveReport } from "@/lib/resumo";
@@ -80,6 +80,8 @@ export default function ExecucaoPage() {
   async function handleComplete() {
     if (!currentTask) return;
     setTransitioning(true);
+
+    await completeNextActionByLead(currentTask.lead.id);
 
     const newCompleted = [...completed, currentTask.lead.id];
     setCompleted(newCompleted);

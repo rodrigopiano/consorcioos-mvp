@@ -116,7 +116,7 @@ function ReportView({ report }: { report: DailyReport }) {
         </div>
         <div className="p-5 space-y-4">
           <MetricRow icon="📞" label="Contatos" done={report.contacts.done} goal={report.contacts.goal} />
-          <MetricRow icon="🔔" label="Follow-ups" done={report.followups.done} goal={report.followups.total} />
+          <MetricRow icon="🔔" label="Follow-ups" done={report.followups.done} goal={report.followups.goal} />
           <MetricRow icon="📅" label="Reuniões" done={report.meetings.done} goal={report.meetings.goal} />
           <MetricRow icon="📄" label="Propostas" done={report.proposals.done} goal={report.proposals.goal} />
           <MetricRow icon="🏆" label="Vendas" done={report.salesClosed} goal={report.salesClosed} />

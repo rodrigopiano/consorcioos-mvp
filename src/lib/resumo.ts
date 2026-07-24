@@ -140,7 +140,7 @@ export function buildDailyReport(
   // Análise automática
   const analysisText = generateAnalysis({
     goalPercent, contacts: { done: session.contactsDone, goal: session.contactsGoal },
-    followups: { done: session.tasksCompleted, total: followupLeads.length },
+    followups: { done: session.tasksCompleted, goal: followupLeads.length },
     riskLeads: riskLeads.length, proposalsSent, hotLeads,
   });
 
@@ -157,7 +157,7 @@ export function buildDailyReport(
   return {
     date: today, generatedAt: new Date().toISOString(),
     contacts: { done: session.contactsDone, goal: session.contactsGoal },
-    followups: { done: session.tasksCompleted, total: followupLeads.length },
+    followups: { done: session.tasksCompleted, goal: followupLeads.length },
     meetings: { done: meetingsDone, goal: meetingsScheduled },
     proposals: { done: proposalsSent, goal: Math.max(proposalsSent, 1) },
     salesClosed, tasksCompleted: session.tasksCompleted, tasksTotal: session.tasksTotal,
@@ -172,7 +172,7 @@ export function buildDailyReport(
 function generateAnalysis(data: {
   goalPercent: number;
   contacts: { done: number; goal: number };
-  followups: { done: number; total: number };
+  followups: { done: number; goal: number };
   riskLeads: number;
   proposalsSent: number;
   hotLeads: DailyReportLead[];
@@ -196,8 +196,8 @@ function generateAnalysis(data: {
     parts.push(`Seu principal gargalo foi o volume de contatos: apenas ${data.contacts.done} de ${data.contacts.goal} realizados.`);
   } else if (data.proposalsSent === 0) {
     parts.push("Nenhuma proposta foi enviada hoje — considere avançar leads qualificados para proposta amanhã.");
-  } else if (data.followups.total > 0 && data.followups.done < data.followups.total * 0.5) {
-    parts.push(`Vários follow-ups ficaram pendentes (${data.followups.done} de ${data.followups.total}).`);
+  } else if (data.followups.goal > 0 && data.followups.done < data.followups.goal * 0.5) {
+    parts.push(`Vários follow-ups ficaram pendentes (${data.followups.done} de ${data.followups.goal}).`);
   }
 
   // Leads em risco

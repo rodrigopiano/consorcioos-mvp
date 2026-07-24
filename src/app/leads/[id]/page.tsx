@@ -4,7 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, Check, Loader2, Pencil, Save,
-  MessageCircle, Phone, AlertTriangle
+  MessageCircle, Phone, AlertTriangle, Zap
 } from "lucide-react";
 import {
   LeadOrigin, LeadInterest, ActionChannel, FunnelStage,
@@ -64,6 +64,28 @@ export default function EditLeadPage() {
     dueDate: new Date().toISOString().split("T")[0],
     channel: "whatsapp" as ActionChannel,
   });
+  const [selectedSuggestion, setSelectedSuggestion] = useState<number | null>(null);
+
+  const ACTION_SUGGESTIONS: { label: string; description: string; channel: ActionChannel; daysFromNow: number }[] = [
+    { label: "📱 Apresentação WA", description: "Enviar mensagem de apresentação no WhatsApp com benefícios do consórcio", channel: "whatsapp", daysFromNow: 0 },
+    { label: "📞 Ligar agora", description: "Ligar para entender a necessidade e qualificar o interesse", channel: "ligacao", daysFromNow: 0 },
+    { label: "📅 Agendar reunião", description: "Propor reunião para apresentar planos e simulações personalizadas", channel: "whatsapp", daysFromNow: 1 },
+    { label: "📄 Enviar simulação", description: "Enviar simulação de consórcio personalizada pelo WhatsApp", channel: "whatsapp", daysFromNow: 1 },
+    { label: "🔔 Follow-up amanhã", description: "Fazer follow-up do último contato e verificar interesse", channel: "whatsapp", daysFromNow: 1 },
+    { label: "📧 Enviar material", description: "Enviar material informativo sobre consórcio por e-mail", channel: "email", daysFromNow: 0 },
+  ];
+
+  function addDays(days: number): string {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    return d.toISOString().split("T")[0];
+  }
+
+  function applySuggestion(idx: number) {
+    const s = ACTION_SUGGESTIONS[idx];
+    setSelectedSuggestion(idx);
+    setActionForm({ description: s.description, channel: s.channel, dueDate: addDays(s.daysFromNow) });
+  }
 
   useEffect(() => {
     getLeadById(id).then(data => {
@@ -278,9 +300,28 @@ export default function EditLeadPage() {
               </div>
             )}
             <div>
-              <label className="block text-xs text-slate-400 mb-1.5 font-medium">O que precisa ser feito? *</label>
-              <input required value={actionForm.description} onChange={e => setActionForm(p => ({ ...p, description: e.target.value }))}
-                placeholder="Ex: Enviar proposta por WhatsApp"
+              <div className="flex items-center gap-1.5 mb-2">
+                <Zap className="w-3.5 h-3.5 text-yellow-400" />
+                <span className="text-xs text-slate-400 font-medium">Sugestões rápidas</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                {ACTION_SUGGESTIONS.map((s, i) => (
+                  <button key={i} type="button" onClick={() => applySuggestion(i)}
+                    className={cn("text-left px-3 py-2 rounded-lg border text-xs font-medium transition-all",
+                      selectedSuggestion === i
+                        ? "bg-sky-500/20 border-sky-500/50 text-sky-300"
+                        : "bg-[#0f172a] border-[#334155] text-slate-400 hover:border-slate-500 hover:text-slate-200"
+                    )}>
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-slate-400 mb-1.5 font-medium">Descrição da ação *</label>
+              <input required value={actionForm.description}
+                onChange={e => { setSelectedSuggestion(null); setActionForm(p => ({ ...p, description: e.target.value })); }}
+                placeholder="O que precisa ser feito?"
                 className="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500" />
             </div>
             <div className="grid grid-cols-2 gap-4">

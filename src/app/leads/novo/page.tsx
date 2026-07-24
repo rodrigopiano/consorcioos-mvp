@@ -2,14 +2,32 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { UserPlus, ArrowLeft, Check, Loader2 } from "lucide-react";
+import { UserPlus, ArrowLeft, Check, Loader2, Zap } from "lucide-react";
 import { LeadOrigin, LeadInterest, ActionChannel, ORIGIN_LABELS, INTEREST_LABELS, CHANNEL_LABELS } from "@/lib/types";
 import { createLead } from "@/lib/db";
+import { cn } from "@/lib/utils";
+
+// Sugestões de próxima ação por origem do lead
+const ACTION_SUGGESTIONS: { label: string; description: string; channel: ActionChannel; daysFromNow: number }[] = [
+  { label: "📱 Apresentação WA", description: "Enviar mensagem de apresentação no WhatsApp com benefícios do consórcio", channel: "whatsapp", daysFromNow: 0 },
+  { label: "📞 Ligar agora", description: "Ligar para entender a necessidade e qualificar o interesse", channel: "ligacao", daysFromNow: 0 },
+  { label: "📅 Agendar reunião", description: "Propor reunião para apresentar planos e simulações personalizadas", channel: "whatsapp", daysFromNow: 1 },
+  { label: "📄 Enviar simulação", description: "Enviar simulação de consórcio personalizada pelo WhatsApp", channel: "whatsapp", daysFromNow: 1 },
+  { label: "🔔 Follow-up amanhã", description: "Fazer follow-up do contato inicial e verificar interesse", channel: "whatsapp", daysFromNow: 1 },
+  { label: "📧 Enviar material", description: "Enviar material informativo sobre consórcio por e-mail", channel: "email", daysFromNow: 0 },
+];
+
+function addDays(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().split("T")[0];
+}
 
 export default function NovoLeadPage() {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [selectedSuggestion, setSelectedSuggestion] = useState<number | null>(null);
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -24,6 +42,17 @@ export default function NovoLeadPage() {
 
   function set(field: string, value: string) {
     setForm(prev => ({ ...prev, [field]: value }));
+  }
+
+  function applySuggestion(idx: number) {
+    const s = ACTION_SUGGESTIONS[idx];
+    setSelectedSuggestion(idx);
+    setForm(prev => ({
+      ...prev,
+      nextActionDescription: s.description,
+      nextActionChannel: s.channel,
+      nextActionDate: addDays(s.daysFromNow),
+    }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -126,19 +155,48 @@ export default function NovoLeadPage() {
             </div>
             <div className="col-span-2">
               <label className="block text-xs text-slate-400 mb-1.5 font-medium">Observações</label>
-              <textarea value={form.notes} onChange={e => set("notes", e.target.value)} placeholder="Anote informações relevantes..." rows={3}
+              <textarea value={form.notes} onChange={e => set("notes", e.target.value)} placeholder="Anote informações relevantes..." rows={2}
                 className="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-sky-500 resize-none" />
             </div>
           </div>
         </Card>
 
-        <Card title="Próxima Ação Obrigatória">
-          <div className="grid grid-cols-2 gap-4">
+        <Card title="Próxima Ação">
+          {/* Sugestões rápidas */}
+          <div className="mb-4">
+            <div className="flex items-center gap-1.5 mb-2">
+              <Zap className="w-3.5 h-3.5 text-yellow-400" />
+              <span className="text-xs text-slate-400 font-medium">Sugestões rápidas</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {ACTION_SUGGESTIONS.map((s, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => applySuggestion(i)}
+                  className={cn(
+                    "text-left px-3 py-2 rounded-lg border text-xs font-medium transition-all",
+                    selectedSuggestion === i
+                      ? "bg-sky-500/20 border-sky-500/50 text-sky-300"
+                      : "bg-[#0f172a] border-[#334155] text-slate-400 hover:border-slate-500 hover:text-slate-200"
+                  )}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-[#334155] pt-4 grid grid-cols-2 gap-4">
             <div className="col-span-2">
-              <label className="block text-xs text-slate-400 mb-1.5 font-medium">O que precisa ser feito? *</label>
-              <input required value={form.nextActionDescription} onChange={e => set("nextActionDescription", e.target.value)}
-                placeholder="Ex: Enviar mensagem de apresentação no WhatsApp"
-                className="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-sky-500" />
+              <label className="block text-xs text-slate-400 mb-1.5 font-medium">Descrição da ação *</label>
+              <input
+                required
+                value={form.nextActionDescription}
+                onChange={e => { setSelectedSuggestion(null); set("nextActionDescription", e.target.value); }}
+                placeholder="O que precisa ser feito?"
+                className="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-sky-500"
+              />
             </div>
             <div>
               <label className="block text-xs text-slate-400 mb-1.5 font-medium">Data *</label>

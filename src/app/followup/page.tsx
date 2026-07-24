@@ -20,7 +20,7 @@ export default function FollowUpPage() {
     getLeads().then(data => { setLeads(data); setLoading(false); });
   }, []);
 
-  const actionableLeads = leads.filter(l => l.nextAction && l.stage !== "venda");
+  const actionableLeads = leads.filter(l => l.nextAction && !l.nextAction.completed && l.stage !== "venda");
 
   const filtered = actionableLeads.filter(lead => {
     if (!lead.nextAction) return false;

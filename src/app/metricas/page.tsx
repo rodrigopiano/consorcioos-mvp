@@ -39,7 +39,7 @@ export default function MetricasPage() {
   const reunioesFeitas = leads.filter(l => l.stage === "reuniao_realizada" || l.stage === "proposta_enviada" || l.stage === "followup" || l.stage === "venda").length;
   const reunioesAgendadas = leads.filter(l => l.stage === "reuniao_agendada").length;
   const propostas = leads.filter(l => l.stage === "proposta_enviada").length;
-  const followups = leads.filter(l => l.nextAction && isOverdue(l.nextAction.dueDate) && l.stage !== "venda").length;
+  const followups = leads.filter(l => l.nextAction && !l.nextAction.completed && isOverdue(l.nextAction.dueDate) && l.stage !== "venda").length;
 
   // Pipeline ponderado (valor esperado)
   const expectedRevenue = leads

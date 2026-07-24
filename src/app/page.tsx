@@ -68,9 +68,9 @@ export default function Dashboard() {
   const pipeline = buildPipeline(leads);
   const missaoTop3 = queue.slice(0, 3);
 
-  const followupsDue = leads.filter(l => l.nextAction && (isDueToday(l.nextAction.dueDate) || isOverdue(l.nextAction.dueDate)) && l.stage !== "venda");
-  const overdueLeads = leads.filter(l => l.nextAction && isOverdue(l.nextAction.dueDate) && l.stage !== "venda");
-  const meetingsToday = leads.filter(l => l.stage === "reuniao_agendada" && l.nextAction && isDueToday(l.nextAction.dueDate));
+  const followupsDue = leads.filter(l => l.nextAction && !l.nextAction.completed && (isDueToday(l.nextAction.dueDate) || isOverdue(l.nextAction.dueDate)) && l.stage !== "venda");
+  const overdueLeads = leads.filter(l => l.nextAction && !l.nextAction.completed && isOverdue(l.nextAction.dueDate) && l.stage !== "venda");
+  const meetingsToday = leads.filter(l => l.stage === "reuniao_agendada" && l.nextAction && !l.nextAction.completed && isDueToday(l.nextAction.dueDate));
   const activeLeads = leads.filter(l => l.stage !== "venda");
   const salesLeads = leads.filter(l => l.stage === "venda");
   const totalPipelineValue = pipeline.reduce((s, p) => s + p.total, 0);

@@ -110,7 +110,7 @@ export function buildDailyReport(
   }));
 
   const riskLeads: DailyReportLead[] = leads
-    .filter(l => l.nextAction && isOverdue(l.nextAction.dueDate) && l.stage !== "venda")
+    .filter(l => l.nextAction && !l.nextAction.completed && isOverdue(l.nextAction.dueDate) && l.stage !== "venda")
     .slice(0, 4)
     .map(l => {
       const due = new Date((l.nextAction!.dueDate) + "T12:00:00");

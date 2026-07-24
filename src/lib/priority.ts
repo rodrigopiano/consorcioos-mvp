@@ -53,7 +53,7 @@ function detectPriority(lead: Lead): TaskPriority {
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-  if (!lead.nextAction) return "sem_acao";
+  if (!lead.nextAction || lead.nextAction.completed) return "sem_acao";
 
   if (lead.stage === "reuniao_agendada" && isDueToday(lead.nextAction.dueDate)) {
     return "reuniao_hoje";
@@ -174,7 +174,7 @@ export interface RiskRevenue {
 export function calcRiskRevenue(leads: Lead[]): RiskRevenue {
   const risky = leads.filter(l =>
     (l.stage === "proposta_enviada" || l.stage === "followup") &&
-    l.nextAction && isOverdue(l.nextAction.dueDate)
+    l.nextAction && !l.nextAction.completed && isOverdue(l.nextAction.dueDate)
   );
   return { total: risky.reduce((s, l) => s + (l.value ?? 0), 0), leads: risky };
 }

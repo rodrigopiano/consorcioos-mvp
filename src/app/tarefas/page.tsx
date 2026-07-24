@@ -29,6 +29,7 @@ export default function TarefasPage() {
       // Filtra apenas leads com ação para hoje ou atrasados
       const queue = buildExecutionQueue(leads).filter(t =>
         t.lead.nextAction &&
+        !t.lead.nextAction.completed &&
         (isDueToday(t.lead.nextAction.dueDate) || isOverdue(t.lead.nextAction.dueDate))
       );
       setTasks(queue);

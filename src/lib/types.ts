@@ -31,7 +31,7 @@ export interface NextAction {
 export interface Lead {
   id: string;
   name: string;
-  phone: string;
+  phone: string; // pode ser vazio se lead veio de rede social sem contato
   origin: LeadOrigin;
   interest: LeadInterest;
   stage: FunnelStage;

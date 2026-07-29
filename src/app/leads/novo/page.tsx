@@ -130,8 +130,8 @@ export default function NovoLeadPage() {
                 className="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-sky-500" />
             </div>
             <div>
-              <label className="block text-xs text-slate-400 mb-1.5 font-medium">Telefone / WhatsApp *</label>
-              <input required value={form.phone} onChange={e => set("phone", e.target.value)} placeholder="(11) 99999-0000"
+              <label className="block text-xs text-slate-400 mb-1.5 font-medium">Telefone / WhatsApp <span className="text-slate-600 font-normal">(opcional)</span></label>
+              <input value={form.phone} onChange={e => set("phone", e.target.value)} placeholder="(11) 99999-0000"
                 className="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-sky-500" />
             </div>
             <div>

@@ -22,7 +22,7 @@ export async function createLead(
     .from("leads")
     .insert({
       name: lead.name,
-      phone: lead.phone,
+      phone: lead.phone || "",
       origin: lead.origin,
       interest: lead.interest,
       stage: lead.stage,
